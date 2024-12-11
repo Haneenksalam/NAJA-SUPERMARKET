@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAJA SUPERMARKET</title>
+    <style>
+        /* General Body Style */
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: #f3f4f7;
+        }
+
+        /* Container Styling */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2C3E50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        /* Grid Layout for Inputs */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        /* Input Styling */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #34495E;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #BDC3C7;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #34495E;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #3498DB;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Button Styling */
+        button {
+            padding: 12px;
+            background-color: #3498DB;
+            color: #fff;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            grid-column: span 3;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2980B9;
+            transform: scale(1.02);
+        }
+
+        /* Display Last Submitted Data */
+        .submitted-data {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 10px;
+        }
+
+        .submitted-data h2 {
+            color: #2C3E50;
+            margin-bottom: 10px;
+        }
+
+        .submitted-data p {
+            color: #34495E;
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NAJA SUPERMARKET DAY RECORD</h1>
+        <form id="dataForm" onsubmit="handleSubmit(event)">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="purchaseAmount">Purchase Amount</label>
+                    <input type="number" id="purchaseAmount" name="purchaseAmount" oninput="calculateTotal()" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="atmPurchase">ATM Purchase</label>
+                    <input type="number" id="atmPurchase" name="atmPurchase" value="0">
+                </div>
+
+                <div class="input-group">
+                    <label for="atm">ATM</label>
+                    <input type="number" id="atm" name="atm" oninput="calculateTotal()" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="balanceCash">Balance Cash</label>
+                    <input type="number" id="balanceCash" name="balanceCash" oninput="calculateTotal()" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="extraIncomeTransaction">Extra Income Transaction</label>
+                    <input type="number" id="extraIncomeTransaction" name="extraIncomeTransaction" value="0">
+                </div>
+
+                <div class="input-group">
+                    <label for="extraExpenses">Extra Expenses</label>
+                    <input type="text" id="extraExpenses" name="extraExpenses" placeholder="No Extra Expenses">
+                </div>
+
+                <div class="input-group">
+                    <label for="extraExpensesTransaction">Extra Expenses Transaction</label>
+                    <input type="number" id="extraExpensesTransaction" name="extraExpensesTransaction" value="0">
+                </div>
+
+                <!-- Total in the last column -->
+                <div class="total-column">
+                    <label for="total">Total</label>
+                    <input type="number" id="total" name="total" readonly>
+                </div>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Section to display last submitted data -->
+        <div class="submitted-data" id="submittedData" style="display: none;">
+            <h2>Last Submitted Data</h2>
+            <p><strong>Date:</strong> <span id="displayDate"></span></p>
+            <p><strong>Purchase Amount:</strong> <span id="displayPurchaseAmount"></span></p>
+            <p><strong>ATM Purchase:</strong> <span id="displayAtmPurchase"></span></p>
+            <p><strong>ATM:</strong> <span id="displayAtm"></span></p>
+            <p><strong>Balance Cash:</strong> <span id="displayBalanceCash"></span></p>
+            <p><strong>Extra Income Transaction:</strong> <span id="displayExtraIncome"></span></p>
+            <p><strong>Extra Expenses:</strong> <span id="displayExtraExpenses"></span></p>
+            <p><strong>Extra Expenses Transaction:</strong> <span id="displayExtraExpensesTransaction"></span></p>
+            <p><strong>Total:</strong> <span id="displayTotal"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            const purchaseAmount = parseFloat(document.getElementById('purchaseAmount').value) || 0;
+            const atm = parseFloat(document.getElementById('atm').value) || 0;
+            const balanceCash = parseFloat(document.getElementById('balanceCash').value) || 0;
+
+            const total = purchaseAmount + atm + balanceCash;
+            document.getElementById('total').value = total.toFixed(2);
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            // Collect form data
+            const date = document.getElementById('date').value;
+            const purchaseAmount = document.getElementById('purchaseAmount').value;
+            const atmPurchase = document.getElementById('atmPurchase').value || 0;
+            const atm = document.getElementById('atm').value;
+            const balanceCash = document.getElementById('balanceCash').value;
+            const extraIncomeTransaction = document.getElementById('extraIncomeTransaction').value || 0;
+            const extraExpenses = document.getElementById('extraExpenses').value || "No Extra Expenses";
+            const extraExpensesTransaction = document.getElementById('extraExpensesTransaction').value || 0;
+            const total = document.getElementById('total').value;
+
+            // Update last submitted data section
+            document.getElementById('displayDate').innerText = date;
+            document.getElementById('displayPurchaseAmount').innerText = purchaseAmount;
+            document.getElementById('displayAtmPurchase').innerText = atmPurchase;
+            document.getElementById('displayAtm').innerText = atm;
+            document.getElementById('displayBalanceCash').innerText = balanceCash;
+            document.getElementById('displayExtraIncome').innerText = extraIncomeTransaction;
+            document.getElementById('displayExtraExpenses').innerText = extraExpenses;
+            document.getElementById('displayExtraExpensesTransaction').innerText = extraExpensesTransaction;
+            document.getElementById('displayTotal').innerText = total;
+
+            // Show the submitted data section
+            document.getElementById('submittedData').style.display = 'block';
+
+            // Reset the form for new entries
+            document.getElementById('dataForm').reset();
+        }
+    </script>
+</body>
+</html>
